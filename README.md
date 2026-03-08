@@ -76,7 +76,7 @@ Clip2Tune/
 
 ## 📸 Preview
 
-*(Add your screenshots here to make it look even better!)*
+<img width="1301" height="867" alt="Screenshot 2026-03-08 092112" src="https://github.com/user-attachments/assets/c3954e48-f9c9-4239-9fdd-64e80dfba358" />
 
 ---
 
