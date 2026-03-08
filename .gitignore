@@ -1,0 +1,22 @@
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Project Specific
+uploads/
+outputs/
+.gemini/
+.agents/
+.agent/
+_agents/
+_agent/
+*.mp4
+*.mp3

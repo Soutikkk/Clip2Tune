@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP4 to MP3 Converter</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --success: #10b981;
+            --error: #ef4444;
+            --border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(to right, var(--primary), #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            font-size: 0.95rem;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 16px;
+            padding: 40px 20px;
+            margin-bottom: 24px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background-color: #f5f3ff;
+        }
+
+        .upload-area.dragover {
+            border-color: var(--primary);
+            background-color: #ede9fe;
+        }
+
+        .upload-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+            color: var(--primary);
+        }
+
+        .file-info {
+            margin-top: 12px;
+            font-weight: 500;
+            color: var(--text-main);
+            display: none;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            outline: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+            margin-top: 16px;
+            text-decoration: none;
+        }
+
+        .status {
+            margin-top: 24px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .status.loading {
+            display: block;
+            color: var(--primary);
+            background: #e0e7ff;
+        }
+
+        .status.success {
+            display: block;
+            color: var(--success);
+            background: #d1fae5;
+        }
+
+        .status.error {
+            display: block;
+            color: var(--error);
+            background: #fee2e2;
+        }
+
+        .loader {
+            width: 20px;
+            height: 20px;
+            border: 3px solid #6366f1;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes rotation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MP4 to MP3</h1>
+        <p class="subtitle">Extract high-quality audio from your videos</p>
+
+        <form id="upload-form">
+            <div class="upload-area" id="drop-zone">
+                <div class="upload-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                </div>
+                <p>Click to upload or drag and drop</p>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">MP4 Video only</p>
+                <div id="file-name" class="file-info"></div>
+                <input type="file" id="file-input" name="file" accept=".mp4" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="convert-btn">
+                Convert to MP3
+            </button>
+        </form>
+
+        <div id="status-msg" class="status"></div>
+        
+        <a id="download-link" href="#" class="btn btn-success hidden" download>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download MP3
+        </a>
+    </div>
+
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const fileNameDisplay = document.getElementById('file-name');
+        const uploadForm = document.getElementById('upload-form');
+        const convertBtn = document.getElementById('convert-btn');
+        const statusMsg = document.getElementById('status-msg');
+        const downloadLink = document.getElementById('download-link');
+
+        // Handle area click
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        // Handle file change
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                fileNameDisplay.textContent = fileInput.files[0].name;
+                fileNameDisplay.style.display = 'block';
+            }
+        });
+
+        // Drag and drop handlers
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            }, false);
+        });
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files.length > 0 && files[0].name.endsWith('.mp4')) {
+                fileInput.files = files;
+                fileNameDisplay.textContent = files[0].name;
+                fileNameDisplay.style.display = 'block';
+            } else {
+                showStatus('Please upload an MP4 file.', 'error');
+            }
+        });
+
+        // Form submission
+        uploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!fileInput.files.length) {
+                showStatus('Please select a file first.', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            // UI feedback
+            convertBtn.disabled = true;
+            convertBtn.innerHTML = '<span class="loader"></span> Processing...';
+            showStatus('Extracting audio from video...', 'loading');
+            downloadLink.classList.add('hidden');
+
+            try {
+                const response = await fetch('/convert', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showStatus('Conversion Successful!', 'success');
+                    downloadLink.href = result.download_url;
+                    downloadLink.classList.remove('hidden');
+                    downloadLink.innerText = `Download ${result.filename}`;
+                } else {
+                    showStatus(result.error || 'Conversion failed.', 'error');
+                }
+            } catch (error) {
+                showStatus('An error occurred during conversion.', 'error');
+                console.error(error);
+            } finally {
+                convertBtn.disabled = false;
+                convertBtn.innerText = 'Convert to MP3';
+            }
+        });
+
+        function showStatus(message, type) {
+            statusMsg.textContent = message;
+            statusMsg.className = `status ${type}`;
+        }
+    </script>
+</body>
+</html>
